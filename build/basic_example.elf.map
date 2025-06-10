@@ -1696,9 +1696,9 @@ Discarded input sections
                 0x00000000       0x60 libmicro_sd.a(micro_sd.cpp.obj)
  .text._ZN7MicroSD6SDCard9copy_fileERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
                 0x00000000      0x10c libmicro_sd.a(micro_sd.cpp.obj)
- .text          0x00000000        0x0 C:\Users\sh_mu\AppData\Local\Temp\cc6PpAmK.o
- .data          0x00000000        0x0 C:\Users\sh_mu\AppData\Local\Temp\cc6PpAmK.o
- .bss           0x00000000        0x0 C:\Users\sh_mu\AppData\Local\Temp\cc6PpAmK.o
+ .text          0x00000000        0x0 C:\Users\sh_mu\AppData\Local\Temp\cc0CYBJk.o
+ .data          0x00000000        0x0 C:\Users\sh_mu\AppData\Local\Temp\cc0CYBJk.o
+ .bss           0x00000000        0x0 C:\Users\sh_mu\AppData\Local\Temp\cc0CYBJk.o
  .text          0x00000000        0x0 c:/progra~1/raspbe~1/picosd~1.1/gcc-ar~1/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp\libstdc++.a(ios_init.o)
  .data          0x00000000        0x0 c:/progra~1/raspbe~1/picosd~1.1/gcc-ar~1/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp\libstdc++.a(ios_init.o)
  .bss           0x00000000        0x0 c:/progra~1/raspbe~1/picosd~1.1/gcc-ar~1/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp\libstdc++.a(ios_init.o)
@@ -19671,7 +19671,7 @@ LOAD c:/progra~1/raspbe~1/picosd~1.1/gcc-ar~1/bin/../lib/gcc/arm-none-eabi/10.3.
 .boot2          0x10000000      0x100
                 0x10000000                __boot2_start__ = .
  *(.boot2)
- .boot2         0x10000000      0x100 C:\Users\sh_mu\AppData\Local\Temp\cc6PpAmK.o
+ .boot2         0x10000000      0x100 C:\Users\sh_mu\AppData\Local\Temp\cc0CYBJk.o
                 0x10000100                __boot2_end__ = .
                 0x00000001                ASSERT (((__boot2_end__ - __boot2_start__) == 0x100), ERROR: Pico second stage bootloader must be 256 bytes in size)
 
@@ -30943,7 +30943,7 @@ LOAD CMakeFiles/basic_example.dir/lib/pico_fatfs/pio/spi/pio_spi.c.obj
 LOAD CMakeFiles/basic_example.dir/C_/Program_Files/Raspberry_Pi/Pico_SDK_v1.5.1/pico-sdk/src/rp2_common/hardware_pio/pio.c.obj
 LOAD CMakeFiles/basic_example.dir/C_/Program_Files/Raspberry_Pi/Pico_SDK_v1.5.1/pico-sdk/src/rp2_common/pico_stdio_uart/stdio_uart.c.obj
 LOAD libmicro_sd.a
-LOAD C:\Users\sh_mu\AppData\Local\Temp\cc6PpAmK.o
+LOAD C:\Users\sh_mu\AppData\Local\Temp\cc0CYBJk.o
 LOAD c:/progra~1/raspbe~1/picosd~1.1/gcc-ar~1/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp\libstdc++.a
 LOAD c:/progra~1/raspbe~1/picosd~1.1/gcc-ar~1/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp\libm.a
 START GROUP
@@ -31079,7 +31079,7 @@ LOAD linker stubs
  .ARM.attributes
                 0x0000095a       0x2c libmicro_sd.a(micro_sd.cpp.obj)
  .ARM.attributes
-                0x00000986       0x22 C:\Users\sh_mu\AppData\Local\Temp\cc6PpAmK.o
+                0x00000986       0x22 C:\Users\sh_mu\AppData\Local\Temp\cc0CYBJk.o
  .ARM.attributes
                 0x000009a8       0x2c c:/progra~1/raspbe~1/picosd~1.1/gcc-ar~1/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp\libstdc++.a(ios_init.o)
  .ARM.attributes
