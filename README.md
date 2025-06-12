@@ -3,7 +3,7 @@
 ![平台](https://img.shields.io/badge/平台-Raspberry%20Pi%20Pico-brightgreen.svg)
 ![版本](https://img.shields.io/badge/版本-1.0.0-orange.svg)
 
-English | [中文](README.zh.md)
+English | [中文](README_zh.md)
 
 ## Overview
 A modern C++17 MicroSD card library for Raspberry Pi Pico, featuring type-safe error handling, RAII resource management, and comprehensive file operations.
