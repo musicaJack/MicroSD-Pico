@@ -1,7 +1,7 @@
 /**
  * @file micro_sd.cpp
  * @brief Modern C++ MicroSD Card Library Implementation
- * @author 重构自RPi_Pico_WAV_Player项目
+ * @author Refactored from RPi_Pico_WAV_Player project
  * @version 1.0.0
  */
 
@@ -14,11 +14,11 @@
 
 #include "hardware/gpio.h"
 #include "pico/time.h"
-#include "tf_card.h"  // pico_fatfs库的头文件
+#include "tf_card.h"  // Header from pico_fatfs library
 
 namespace MicroSD {
 
-// === 错误处理 ===
+// === Error Handling ===
 
 ErrorCode fresult_to_error_code(FRESULT fr) {
     switch (fr) {
@@ -36,21 +36,21 @@ ErrorCode fresult_to_error_code(FRESULT fr) {
 
 std::string SDCard::get_error_description(ErrorCode error) {
     switch (error) {
-        case ErrorCode::SUCCESS: return "操作成功";
-        case ErrorCode::INIT_FAILED: return "初始化失败";
-        case ErrorCode::MOUNT_FAILED: return "挂载失败";
-        case ErrorCode::FILE_NOT_FOUND: return "文件或目录未找到";
-        case ErrorCode::IO_ERROR: return "IO错误";
-        case ErrorCode::DISK_FULL: return "磁盘已满";
-        case ErrorCode::INVALID_PARAMETER: return "无效参数";
-        case ErrorCode::PERMISSION_DENIED: return "权限被拒绝";
-        case ErrorCode::FATFS_ERROR: return "FATFS错误";
-        case ErrorCode::UNKNOWN_ERROR: return "未知错误";
-        default: return "未定义错误";
+        case ErrorCode::SUCCESS: return "Operation successful";
+        case ErrorCode::INIT_FAILED: return "Initialization failed";
+        case ErrorCode::MOUNT_FAILED: return "Mount failed";
+        case ErrorCode::FILE_NOT_FOUND: return "File or directory not found";
+        case ErrorCode::IO_ERROR: return "I/O error";
+        case ErrorCode::DISK_FULL: return "Disk is full";
+        case ErrorCode::INVALID_PARAMETER: return "Invalid parameter";
+        case ErrorCode::PERMISSION_DENIED: return "Permission denied";
+        case ErrorCode::FATFS_ERROR: return "FATFS error";
+        case ErrorCode::UNKNOWN_ERROR: return "Unknown error";
+        default: return "Undefined error";
     }
 }
 
-// === 路径工具函数 ===
+// === Path Utility Functions ===
 
 std::string SDCard::normalize_path(const std::string& path) {
     if (path.empty() || path == ".") {
@@ -59,17 +59,17 @@ std::string SDCard::normalize_path(const std::string& path) {
     
     std::string normalized = path;
     
-    // 确保以 / 开头
+    // Ensure path starts with /
     if (normalized[0] != '/') {
         normalized = "/" + normalized;
     }
     
-    // 移除末尾的 /（除非是根目录）
+    // Remove trailing / (except for root)
     if (normalized.length() > 1 && normalized.back() == '/') {
         normalized.pop_back();
     }
     
-    // 处理 // 重复斜杠
+    // Handle repeated slashes //
     size_t pos = 0;
     while ((pos = normalized.find("//", pos)) != std::string::npos) {
         normalized.replace(pos, 2, "/");
@@ -102,7 +102,7 @@ std::pair<std::string, std::string> SDCard::split_path(const std::string& path) 
     return {normalized.substr(0, pos), normalized.substr(pos + 1)};
 }
 
-// === SDCard类实现 ===
+// === SDCard Class Implementation ===
 
 SDCard::SDCard(SPIConfig config) 
     : config_(std::move(config)), is_mounted_(false), fs_type_(0), current_path_("/") {
@@ -127,13 +127,13 @@ SDCard::SDCard(SDCard&& other) noexcept
 
 SDCard& SDCard::operator=(SDCard&& other) noexcept {
     if (this != &other) {
-        // 清理当前资源
+        // Clean up current resources
         if (is_mounted_) {
             unmount_filesystem();
             deinitialize_spi();
         }
         
-        // 移动资源
+        // Move resources
         config_ = std::move(other.config_);
         fs_ = std::move(other.fs_);
         is_mounted_ = other.is_mounted_;
@@ -147,22 +147,22 @@ SDCard& SDCard::operator=(SDCard&& other) noexcept {
 }
 
 void SDCard::initialize_spi() {
-    // 配置SPI引脚
+    // Configure SPI pins
     gpio_set_function(config_.pin_miso, GPIO_FUNC_SPI);
     gpio_set_function(config_.pin_sck, GPIO_FUNC_SPI);
     gpio_set_function(config_.pin_mosi, GPIO_FUNC_SPI);
     gpio_set_function(config_.pin_cs, GPIO_FUNC_SPI);
     
-    // 如果使用内部上拉
+    // If using internal pullup
     if (config_.use_internal_pullup) {
         gpio_pull_up(config_.pin_miso);
         gpio_pull_up(config_.pin_cs);
     }
     
-    // 初始化SPI
+    // Initialize SPI
     spi_init(config_.spi_port, config_.clk_slow);
     
-    // 配置pico_fatfs
+    // Configure pico_fatfs
     pico_fatfs_spi_config_t fatfs_config = {
         config_.spi_port,
         config_.clk_slow,
@@ -185,7 +185,7 @@ void SDCard::deinitialize_spi() {
 Result<void> SDCard::mount_filesystem() {
     FRESULT fr;
     
-    // 尝试多次挂载（参考原代码的重试机制）
+    // Try mounting multiple times (based on original retry mechanism)
     for (int i = 0; i < 5; i++) {
         fr = f_mount(&fs_, "", 1);
         if (fr == FR_OK) {
@@ -198,7 +198,7 @@ Result<void> SDCard::mount_filesystem() {
     }
     
     return Result<void>(fresult_to_error_code(fr), 
-                        "SD卡挂载失败，FRESULT: " + std::to_string(fr));
+                        "SD card mount failed, FRESULT: " + std::to_string(fr));
 }
 
 void SDCard::unmount_filesystem() {
@@ -216,7 +216,7 @@ Result<void> SDCard::initialize() {
     
     initialize_spi();
     
-    // 给某些SD卡一些初始化时间
+    // Give some SD cards time to initialize
     sleep_ms(100);
     
     auto result = mount_filesystem();
@@ -230,7 +230,7 @@ Result<void> SDCard::initialize() {
 
 std::string SDCard::get_filesystem_type() const {
     if (!is_mounted_) {
-        return "未挂载";
+        return "Not mounted";
     }
     
     switch (fs_type_) {
@@ -238,13 +238,13 @@ std::string SDCard::get_filesystem_type() const {
         case FS_FAT16: return "FAT16"; 
         case FS_FAT32: return "FAT32";
         case FS_EXFAT: return "exFAT";
-        default: return "未知(" + std::to_string(fs_type_) + ")";
+        default: return "Unknown(" + std::to_string(fs_type_) + ")";
     }
 }
 
 Result<std::pair<size_t, size_t>> SDCard::get_capacity() const {
     if (!is_mounted_) {
-        return Result<std::pair<size_t, size_t>>(ErrorCode::MOUNT_FAILED, "SD卡未挂载");
+        return Result<std::pair<size_t, size_t>>(ErrorCode::MOUNT_FAILED, "SD card not mounted");
     }
     
     FATFS* fs;
@@ -285,7 +285,7 @@ Result<std::pair<size_t, size_t>> SDCard::get_capacity() const {
     return Result<std::pair<size_t, size_t>>({total_bytes, free_bytes});
 }
 
-// === 目录操作 ===
+// === Directory Operations ===
 
 Result<void> SDCard::open_directory(const std::string& path) {
     if (!is_mounted_) {
@@ -395,7 +395,7 @@ Result<void> SDCard::remove_directory(const std::string& path) {
     return Result<void>();
 }
 
-// === 文件操作 ===
+// === File Operations ===
 
 bool SDCard::file_exists(const std::string& path) const {
     if (!is_mounted_) return false;
@@ -598,7 +598,7 @@ Result<void> SDCard::copy_file(const std::string& src_path, const std::string& d
     return Result<void>();
 }
 
-// === 流式文件操作 FileHandle实现 ===
+// === Stream File Operations FileHandle Implementation ===
 
 SDCard::FileHandle::FileHandle(FileHandle&& other) noexcept 
     : file_(std::move(other.file_))
@@ -795,7 +795,7 @@ Result<SDCard::FileHandle> SDCard::open_file(const std::string& path, const std:
     return Result<FileHandle>(std::move(handle));
 }
 
-// === 实用工具方法 ===
+// === Utility Methods ===
 
 Result<void> SDCard::sync() {
     if (!is_mounted_) {

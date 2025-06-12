@@ -1,14 +1,14 @@
 /**
  * @file micro_sd.hpp
  * @brief Modern C++ MicroSD Card Library for Raspberry Pi Pico
- * @author 重构自RPi_Pico_WAV_Player项目
+ * @author Refactored from RPi_Pico_WAV_Player project
  * @version 1.0.0
  * 
- * 基于您的接线：
- * GPIO10(SCK) -> SPI时钟信号
- * GPIO11(MISO) -> 主机接收数据
- * GPIO12(MOSI) -> 主机发送数据  
- * GPIO13(CS) -> 片选信号
+ * Based on your wiring:
+ * GPIO10(SCK) -> SPI clock signal
+ * GPIO11(MISO) -> Master In Slave Out
+ * GPIO12(MOSI) -> Master Out Slave In  
+ * GPIO13(CS) -> Chip Select
  * VCC -> 3.3V
  * GND -> GND
  */
@@ -29,21 +29,21 @@
 namespace MicroSD {
 
 /**
- * @brief 文件信息结构体
+ * @brief File information structure
  */
 struct FileInfo {
-    std::string name;           // 文件名
-    std::string full_path;      // 完整路径
-    size_t size;               // 文件大小（字节）
-    bool is_directory;         // 是否为目录
-    uint8_t attributes;        // 文件属性
+    std::string name;           // File name
+    std::string full_path;      // Full path
+    size_t size;               // File size (bytes)
+    bool is_directory;         // Is directory flag
+    uint8_t attributes;        // File attributes
     
-    // C++17 结构化绑定支持
+    // C++17 structured binding support
     auto tie() const { return std::tie(name, full_path, size, is_directory, attributes); }
 };
 
 /**
- * @brief 错误类型枚举
+ * @brief Error code enumeration
  */
 enum class ErrorCode {
     SUCCESS = 0,
@@ -59,7 +59,7 @@ enum class ErrorCode {
 };
 
 /**
- * @brief 结果模板类 - 现代C++错误处理方式
+ * @brief Result template class - Modern C++ error handling approach
  */
 template<typename T>
 class Result {
@@ -84,7 +84,7 @@ public:
     T* operator->() { return &value_.value(); }
 };
 
-// Result<void>的完全特化
+// Complete specialization for Result<void>
 template<>
 class Result<void> {
 private:
@@ -103,7 +103,7 @@ public:
 };
 
 /**
- * @brief MicroSD卡管理器类
+ * @brief MicroSD card manager class
  */
 class SDCard {
 private:
@@ -112,11 +112,11 @@ private:
     bool is_mounted_;
     uint8_t fs_type_;
     
-    // RAII资源管理
+    // RAII resource management
     std::unique_ptr<DIR> current_dir_;
     std::string current_path_;
     
-    // 私有方法
+    // Private methods
     void initialize_spi();
     void deinitialize_spi();
     Result<void> mount_filesystem();
@@ -124,163 +124,163 @@ private:
     
 public:
     /**
-     * @brief 构造函数
-     * @param config SPI配置，使用默认配置如果不提供
+     * @brief Constructor
+     * @param config SPI configuration, uses default if not provided
      */
     explicit SDCard(SPIConfig config = SPIConfig{});
     
     /**
-     * @brief 析构函数 - RAII自动清理资源
+     * @brief Destructor - RAII automatic resource cleanup
      */
     ~SDCard();
     
-    // 禁用拷贝构造和赋值（资源管理安全）
+    // Disable copy constructor and assignment (resource management safety)
     SDCard(const SDCard&) = delete;
     SDCard& operator=(const SDCard&) = delete;
     
-    // 支持移动语义
+    // Support move semantics
     SDCard(SDCard&& other) noexcept;
     SDCard& operator=(SDCard&& other) noexcept;
     
     /**
-     * @brief 初始化SD卡
-     * @return 初始化结果
+     * @brief Initialize SD card
+     * @return Initialization result
      */
     Result<void> initialize();
     
     /**
-     * @brief 检查SD卡是否已挂载
+     * @brief Check if SD card is mounted
      */
     bool is_mounted() const { return is_mounted_; }
     
     /**
-     * @brief 获取文件系统类型
+     * @brief Get filesystem type
      */
     std::string get_filesystem_type() const;
     
     /**
-     * @brief 获取SD卡容量信息
-     * @return 总容量和可用容量（字节）
+     * @brief Get SD card capacity information
+     * @return Total and available capacity (bytes)
      */
     Result<std::pair<size_t, size_t>> get_capacity() const;
     
-    // === 目录操作 ===
+    // === Directory Operations ===
     
     /**
-     * @brief 打开目录
-     * @param path 目录路径
-     * @return 操作结果
+     * @brief Open directory
+     * @param path Directory path
+     * @return Operation result
      */
     Result<void> open_directory(const std::string& path);
     
     /**
-     * @brief 获取当前目录路径
+     * @brief Get current directory path
      */
     std::string get_current_directory() const { return current_path_; }
     
     /**
-     * @brief 列出目录内容
-     * @param path 目录路径，空字符串表示当前目录
-     * @return 文件列表
+     * @brief List directory contents
+     * @param path Directory path, empty string for current directory
+     * @return File list
      */
     Result<std::vector<FileInfo>> list_directory(const std::string& path = "");
     
     /**
-     * @brief 创建目录
-     * @param path 目录路径
-     * @return 操作结果
+     * @brief Create directory
+     * @param path Directory path
+     * @return Operation result
      */
     Result<void> create_directory(const std::string& path);
     
     /**
-     * @brief 删除目录（必须为空）
-     * @param path 目录路径
-     * @return 操作结果
+     * @brief Remove directory (must be empty)
+     * @param path Directory path
+     * @return Operation result
      */
     Result<void> remove_directory(const std::string& path);
     
-    // === 文件操作 ===
+    // === File Operations ===
     
     /**
-     * @brief 检查文件是否存在
-     * @param path 文件路径
-     * @return 文件是否存在
+     * @brief Check if file exists
+     * @param path File path
+     * @return Whether file exists
      */
     bool file_exists(const std::string& path) const;
     
     /**
-     * @brief 获取文件信息
-     * @param path 文件路径
-     * @return 文件信息
+     * @brief Get file information
+     * @param path File path
+     * @return File information
      */
     Result<FileInfo> get_file_info(const std::string& path) const;
     
     /**
-     * @brief 读取整个文件到内存
-     * @param path 文件路径
-     * @return 文件内容
+     * @brief Read entire file into memory
+     * @param path File path
+     * @return File content
      */
     Result<std::vector<uint8_t>> read_file(const std::string& path) const;
     
     /**
-     * @brief 读取文件的一部分
-     * @param path 文件路径
-     * @param offset 偏移量
-     * @param size 读取大小
-     * @return 文件内容
+     * @brief Read part of a file
+     * @param path File path
+     * @param offset Offset
+     * @param size Size to read
+     * @return File content
      */
     Result<std::vector<uint8_t>> read_file_chunk(const std::string& path, 
                                                   size_t offset, size_t size) const;
     
     /**
-     * @brief 写入数据到文件
-     * @param path 文件路径
-     * @param data 要写入的数据
-     * @param append 是否追加模式
-     * @return 操作结果
+     * @brief Write data to file
+     * @param path File path
+     * @param data Data to write
+     * @param append Whether to append
+     * @return Operation result
      */
     Result<void> write_file(const std::string& path, 
                            const std::vector<uint8_t>& data, 
                            bool append = false);
     
     /**
-     * @brief 写入字符串到文件
-     * @param path 文件路径
-     * @param content 字符串内容
-     * @param append 是否追加模式
-     * @return 操作结果
+     * @brief Write string to file
+     * @param path File path
+     * @param content String content
+     * @param append Whether to append
+     * @return Operation result
      */
     Result<void> write_text_file(const std::string& path, 
-                                const std::string& content, 
+                                const std::string& content,
                                 bool append = false);
     
     /**
-     * @brief 删除文件
-     * @param path 文件路径
-     * @return 操作结果
+     * @brief Delete file
+     * @param path File path
+     * @return Operation result
      */
     Result<void> delete_file(const std::string& path);
     
     /**
-     * @brief 重命名文件或目录
-     * @param old_path 原路径
-     * @param new_path 新路径
-     * @return 操作结果
+     * @brief Rename file or directory
+     * @param old_path Old path
+     * @param new_path New path
+     * @return Operation result
      */
     Result<void> rename(const std::string& old_path, const std::string& new_path);
     
     /**
-     * @brief 复制文件
-     * @param src_path 源文件路径
-     * @param dst_path 目标文件路径
-     * @return 操作结果
+     * @brief Copy file
+     * @param src_path Source path
+     * @param dst_path Destination path
+     * @return Operation result
      */
     Result<void> copy_file(const std::string& src_path, const std::string& dst_path);
     
-    // === 流式文件操作 ===
+    // === Stream File Operations ===
     
     /**
-     * @brief 文件句柄类 - RAII管理文件资源
+     * @brief File handle class for stream operations
      */
     class FileHandle {
     private:
@@ -292,14 +292,16 @@ public:
         FileHandle() : is_open_(false) {}
         ~FileHandle() { close(); }
         
-        // 禁用拷贝，支持移动
+        // Disable copy operations
         FileHandle(const FileHandle&) = delete;
         FileHandle& operator=(const FileHandle&) = delete;
+        
+        // Enable move operations
         FileHandle(FileHandle&& other) noexcept;
         FileHandle& operator=(FileHandle&& other) noexcept;
         
         bool is_open() const { return is_open_; }
-        const std::string& get_path() const { return path_; }
+        const std::string& path() const { return path_; }
         
         Result<void> open(const std::string& path, const std::string& mode);
         void close();
@@ -318,48 +320,42 @@ public:
     };
     
     /**
-     * @brief 打开文件获取句柄
-     * @param path 文件路径
-     * @param mode 打开模式 ("r", "w", "a", "r+", "w+", "a+")
-     * @return 文件句柄
+     * @brief Open file for stream operations
+     * @param path File path
+     * @param mode Open mode ("r", "w", "a", "r+", "w+", "a+")
+     * @return File handle
      */
     Result<FileHandle> open_file(const std::string& path, const std::string& mode);
     
-    // === 实用工具方法 ===
+    // === Utility Methods ===
     
     /**
-     * @brief 同步数据到SD卡
-     * @return 操作结果
+     * @brief Sync all file system changes to disk
+     * @return Operation result
      */
     Result<void> sync();
     
     /**
-     * @brief 格式化SD卡 (危险操作!)
-     * @param filesystem_type 文件系统类型 (FAT32等)
-     * @return 操作结果
+     * @brief Format SD card
+     * @param filesystem_type Filesystem type ("FAT32", "FAT16", "exFAT")
+     * @return Operation result
      */
     Result<void> format(const std::string& filesystem_type = "FAT32");
     
     /**
-     * @brief 获取错误描述字符串
-     * @param error_code 错误代码
-     * @return 错误描述
+     * @brief Get error description
+     * @param error_code Error code
+     * @return Error description string
      */
     static std::string get_error_description(ErrorCode error_code);
     
-    /**
-     * @brief 路径工具函数
-     */
+    // Path utility functions
     static std::string normalize_path(const std::string& path);
     static std::string join_path(const std::string& dir, const std::string& file);
     static std::pair<std::string, std::string> split_path(const std::string& path);
 };
 
-// === 辅助函数 ===
-
-/**
- * @brief FRESULT到ErrorCode的转换
- */
+// Helper function to convert FATFS result to error code
 ErrorCode fresult_to_error_code(FRESULT fr);
 
 } // namespace MicroSD 

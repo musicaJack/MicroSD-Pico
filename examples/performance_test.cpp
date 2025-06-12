@@ -1,33 +1,33 @@
 /**
  * @file performance_test.cpp
- * @brief MicroSD卡综合测试程序
+ * @brief Comprehensive MicroSD Card Test Program
  * 
- * 注意：请确保按照以下方式连接MicroSD模块，或修改include/spi_config.hpp中的引脚配置：
+ * Note: Please ensure the MicroSD module is connected as follows, or modify the pin configuration in include/spi_config.hpp:
  * 
- * MicroSD模块      Raspberry Pi Pico
- * -----------     -----------------
- * VCC         ->  3.3V (Pin 36)
- * GND         ->  GND  (Pin 38)  
- * MISO        ->  GPIO7 (Pin 10)
- * MOSI        ->  GPIO0 (Pin 1)
- * SCK         ->  GPIO6 (Pin 9)
- * CS          ->  GPIO1 (Pin 2)
+ * MicroSD Module    Raspberry Pi Pico
+ * -------------     -----------------
+ * VCC           ->  3.3V (Pin 36)
+ * GND           ->  GND  (Pin 38)  
+ * MISO          ->  GPIO7 (Pin 10)
+ * MOSI          ->  GPIO0 (Pin 1)
+ * SCK           ->  GPIO6 (Pin 9)
+ * CS            ->  GPIO1 (Pin 2)
  * 
- * 本程序包含以下测试：
- * 1. 基本功能测试
- *    - 文件系统信息
- *    - 基本文件操作
- *    - 目录操作
- * 2. 高级功能测试
- *    - 文件搜索
- *    - 批量文件操作
- *    - 大文件处理
- * 3. 性能测试
- *    - 顺序读写速度测试
- *    - 随机读写速度测试
- *    - 小文件批量操作测试
- *    - 大文件读写测试
- *    - 持续写入压力测试
+ * This program includes the following tests:
+ * 1. Basic Function Tests
+ *    - File system information
+ *    - Basic file operations
+ *    - Directory operations
+ * 2. Advanced Function Tests
+ *    - File search
+ *    - Batch file operations
+ *    - Large file handling
+ * 3. Performance Tests
+ *    - Sequential read/write speed test
+ *    - Random read/write speed test
+ *    - Small file batch operation test
+ *    - Large file read/write test
+ *    - Continuous write stress test
  */
 
 #include <stdio.h>
@@ -42,16 +42,16 @@
 using namespace MicroSD;
 using namespace std::chrono;
 
-// 测试配置
-constexpr size_t CHUNK_SIZE = 32 * 1024;     // 32KB 块大小
+// Test Configuration
+constexpr size_t CHUNK_SIZE = 32 * 1024;     // 32KB block size
 constexpr size_t SMALL_FILE_SIZE = 4 * 1024;  // 4KB
 constexpr size_t MEDIUM_FILE_SIZE = 256 * 1024; // 256KB
 constexpr size_t LARGE_FILE_SIZE = 512 * 1024;  // 512KB
-constexpr int NUM_FILES = 10;                   // 测试文件数量
-constexpr int TEST_DURATION = 30;               // 测试时间（秒）
+constexpr int NUM_FILES = 10;                   // Number of test files
+constexpr int TEST_DURATION = 30;               // Test duration (seconds)
 constexpr size_t MAX_RESULTS = 5;
 
-// 测试数据生成器
+// Test Data Generator
 class TestDataGenerator {
 private:
     std::random_device rd;
@@ -62,7 +62,7 @@ private:
 public:
     TestDataGenerator() : gen(rd()), dis(0, 255) {}
 
-    // 生成固定大小的测试数据块
+    // Generate fixed-size test data block
     const std::array<uint8_t, CHUNK_SIZE>& generate_chunk() {
         for (size_t i = 0; i < CHUNK_SIZE; ++i) {
             buffer[i] = static_cast<uint8_t>(dis(gen));
@@ -71,7 +71,7 @@ public:
     }
 };
 
-// 性能测试结果结构体
+// Performance Test Result Structure
 struct TestResult {
     double duration_ms;
     double speed_mbps;
@@ -84,15 +84,15 @@ struct TestResult {
         : duration_ms(d), speed_mbps(s), total_bytes(t), operation(std::move(op)) {}
 };
 
-// 打印测试结果
+// Print Test Result
 void print_result(const TestResult& result) {
-    printf("测试项目: %s\n", result.operation.c_str());
-    printf("  耗时: %.2f ms\n", result.duration_ms);
-    printf("  速度: %.2f MB/s\n", result.speed_mbps);
-    printf("  总字节数: %zu bytes\n\n", result.total_bytes);
+    printf("Test Item: %s\n", result.operation.c_str());
+    printf("  Duration: %.2f ms\n", result.duration_ms);
+    printf("  Speed: %.2f MB/s\n", result.speed_mbps);
+    printf("  Total Bytes: %zu bytes\n\n", result.total_bytes);
 }
 
-// 测试结果管理类
+// Test Results Manager Class
 class TestResults {
 private:
     static constexpr size_t MAX_RESULTS = 10;
@@ -116,23 +116,23 @@ public:
     }
 
     void print_summary() const {
-        printf("\n=== 测试结果汇总 ===\n\n");
+        printf("\n=== Test Results Summary ===\n\n");
         for (size_t i = 0; i < count; ++i) {
             print_result(results[i]);
         }
     }
 };
 
-// 文件信息打印
+// Print File Information
 void print_file_info(const FileInfo& info) {
-    printf("文件名: %s\n", info.name.c_str());
-    printf("完整路径: %s\n", info.full_path.c_str());
-    printf("大小: %zu 字节\n", info.size);
-    printf("类型: %s\n", info.is_directory ? "目录" : "文件");
+    printf("Filename: %s\n", info.name.c_str());
+    printf("Full Path: %s\n", info.full_path.c_str());
+    printf("Size: %zu bytes\n", info.size);
+    printf("Type: %s\n", info.is_directory ? "Directory" : "File");
     printf("---\n");
 }
 
-// 等待用户确认
+// Wait for User Confirmation
 bool wait_for_user_confirmation(const char* prompt) {
     printf("\n%s (y/n): ", prompt);
     fflush(stdout);
@@ -150,22 +150,22 @@ bool wait_for_user_confirmation(const char* prompt) {
     }
 }
 
-// 基本功能测试
+// Basic Function Test
 void demonstrate_basic_operations(SDCard& sd_card) {
-    printf("\n=== 基本功能测试 ===\n");
+    printf("\n=== Basic Function Test ===\n");
     
-    // 获取文件系统信息
-    printf("文件系统类型: %s\n", sd_card.get_filesystem_type().c_str());
+    // Get filesystem information
+    printf("Filesystem Type: %s\n", sd_card.get_filesystem_type().c_str());
     
     auto capacity_result = sd_card.get_capacity();
     if (capacity_result.is_ok()) {
         auto [total, free] = *capacity_result;
-        printf("总容量: %.2f MB\n", total / 1024.0 / 1024.0);
-        printf("可用容量: %.2f MB\n", free / 1024.0 / 1024.0);
+        printf("Total Capacity: %.2f MB\n", total / 1024.0 / 1024.0);
+        printf("Available Capacity: %.2f MB\n", free / 1024.0 / 1024.0);
     }
     
-    // 列出根目录内容
-    printf("\n=== 根目录内容 ===\n");
+    // List root directory contents
+    printf("\n=== Root Directory Contents ===\n");
     auto list_result = sd_card.list_directory("/");
     if (list_result.is_ok()) {
         for (const auto& file : *list_result) {
@@ -173,31 +173,31 @@ void demonstrate_basic_operations(SDCard& sd_card) {
         }
     }
     
-    // 创建测试目录
-    printf("\n=== 创建测试目录 ===\n");
+    // Create test directory
+    printf("\n=== Create Test Directory ===\n");
     auto mkdir_result = sd_card.create_directory("/test_dir");
     if (mkdir_result.is_ok()) {
-        printf("创建目录 '/test_dir' 成功\n");
+        printf("Successfully created directory '/test_dir'\n");
     }
     
-    // 写入测试文件
-    printf("\n=== 写入测试文件 ===\n");
-    std::string test_content = "Hello, MicroSD!\n这是一个测试文件。\n";
+    // Write test file
+    printf("\n=== Write Test File ===\n");
+    std::string test_content = "Hello, MicroSD!\nThis is a test file.\n";
     auto write_result = sd_card.write_text_file("/test_dir/hello.txt", test_content);
     if (write_result.is_ok()) {
-        printf("写入文件成功\n");
+        printf("File written successfully\n");
     }
     
-    // 读取测试文件
-    printf("\n=== 读取测试文件 ===\n");
+    // Read test file
+    printf("\n=== Read Test File ===\n");
     auto read_result = sd_card.read_file("/test_dir/hello.txt");
     if (read_result.is_ok()) {
         std::string content(read_result->begin(), read_result->end());
-        printf("文件内容:\n%s\n", content.c_str());
+        printf("File content:\n%s\n", content.c_str());
     }
 }
 
-// 文件搜索功能
+// File Search Function
 std::vector<FileInfo> search_files_by_extension(SDCard& sd_card, 
                                                const std::string& directory,
                                                const std::string& extension) {
@@ -229,14 +229,14 @@ std::vector<FileInfo> search_files_by_extension(SDCard& sd_card,
     return matching_files;
 }
 
-// 高级功能测试
+// Advanced Function Test
 void demonstrate_advanced_operations(SDCard& sd_card) {
-    printf("\n=== 高级功能测试 ===\n");
+    printf("\n=== Advanced Function Test ===\n");
     
-    // 批量文件操作
+    // Batch file operations
     const std::string base_dir = "/batch_test";
     
-    // 先删除旧目录（如果存在）
+    // Delete old directory if exists
     auto old_files = sd_card.list_directory(base_dir);
     if (old_files.is_ok()) {
         for (const auto& file : *old_files) {
@@ -247,7 +247,7 @@ void demonstrate_advanced_operations(SDCard& sd_card) {
         sd_card.remove_directory(base_dir);
     }
     
-    // 创建测试目录结构
+    // Create test directory structure
     std::vector<std::string> dirs = {
         "/batch_test",
         "/batch_test/images",
@@ -256,58 +256,58 @@ void demonstrate_advanced_operations(SDCard& sd_card) {
         "/batch_test/others"
     };
     
-    printf("\n创建测试目录结构...\n");
+    printf("\nCreating test directory structure...\n");
     for (const auto& dir : dirs) {
         auto mkdir_result = sd_card.create_directory(dir);
         if (mkdir_result.is_ok()) {
-            printf("创建目录: %s\n", dir.c_str());
+            printf("Directory created: %s\n", dir.c_str());
         }
     }
     
-    // 创建测试文件
-    printf("\n创建测试文件...\n");
+    // Create test files
+    printf("\nCreating test files...\n");
     std::vector<std::pair<std::string, std::string>> test_files = {
-        {"/batch_test/images/photo1.jpg", "这是一张照片的数据"},
-        {"/batch_test/images/photo2.jpg", "这是另一张照片的数据"},
-        {"/batch_test/images/image.png", "这是一个PNG图片的数据"},
-        {"/batch_test/documents/readme.txt", "这是一个说明文件"},
-        {"/batch_test/documents/notes.txt", "这是一些笔记"},
-        {"/batch_test/documents/report.pdf", "这是一个PDF文档"},
-        {"/batch_test/audio/song1.mp3", "这是一首MP3歌曲"},
-        {"/batch_test/audio/song2.mp3", "这是另一首MP3歌曲"},
-        {"/batch_test/audio/music.wav", "这是一个WAV音频文件"},
-        {"/batch_test/others/test.txt", "这是一个测试文件"}
+        {"/batch_test/images/photo1.jpg", "This is the data of a photo"},
+        {"/batch_test/images/photo2.jpg", "This is the data of another photo"},
+        {"/batch_test/images/image.png", "This is the data of a PNG image"},
+        {"/batch_test/documents/readme.txt", "This is a readme file"},
+        {"/batch_test/documents/notes.txt", "These are some notes"},
+        {"/batch_test/documents/report.pdf", "This is a PDF document"},
+        {"/batch_test/audio/song1.mp3", "This is an MP3 song"},
+        {"/batch_test/audio/song2.mp3", "This is another MP3 song"},
+        {"/batch_test/audio/music.wav", "This is a WAV audio file"},
+        {"/batch_test/others/test.txt", "This is a test file"}
     };
     
     for (const auto& [path, content] : test_files) {
         auto result = sd_card.write_text_file(path, content);
         if (result.is_ok()) {
-            printf("创建文件: %s\n", path.c_str());
+            printf("File created: %s\n", path.c_str());
         }
     }
     
-    // 搜索特定扩展名的文件
-    printf("\n=== 文件搜索演示 ===\n");
+    // Search for files with specific extensions
+    printf("\n=== File Search Demonstration ===\n");
     std::vector<std::string> extensions = {".txt", ".jpg", ".mp3"};
     
     for (const auto& ext : extensions) {
-        printf("\n搜索 %s 文件:\n", ext.c_str());
+        printf("\nSearching for %s files:\n", ext.c_str());
         auto matching_files = search_files_by_extension(sd_card, "/batch_test", ext);
         
         if (matching_files.empty()) {
-            printf("未找到%s文件\n", ext.c_str());
+            printf("No %s files found\n", ext.c_str());
         } else {
             for (const auto& file : matching_files) {
-                printf("  找到: %s (大小: %zu 字节)\n", 
+                printf("   Found: %s (Size: %zu bytes)\n", 
                        file.full_path.c_str(), file.size);
             }
         }
     }
     
-    printf("\n文件搜索演示完成\n");
+    printf("\nFile Search Demonstration Completed\n");
 }
 
-// 顺序写入测试
+// Sequential Write Test
 TestResult sequential_write_test(SDCard& sd_card, size_t file_size) {
     TestDataGenerator gen;
     auto start = high_resolution_clock::now();
@@ -315,7 +315,7 @@ TestResult sequential_write_test(SDCard& sd_card, size_t file_size) {
     
     auto file_result = sd_card.open_file("/seq_test.bin", "w");
     if (file_result.is_error()) {
-        return TestResult(0, 0, 0, "顺序写入测试（失败）");
+        return TestResult(0, 0, 0, "Sequential Write Test (Failed)");
     }
     
     auto& file = *file_result;
@@ -325,7 +325,7 @@ TestResult sequential_write_test(SDCard& sd_card, size_t file_size) {
         
         auto write_result = file.write(std::vector<uint8_t>(chunk.begin(), chunk.begin() + to_write));
         if (write_result.is_error()) {
-            return TestResult(0, 0, 0, "顺序写入测试（失败）");
+            return TestResult(0, 0, 0, "Sequential Write Test (Failed)");
         }
         
         written += to_write;
@@ -341,18 +341,18 @@ TestResult sequential_write_test(SDCard& sd_card, size_t file_size) {
         static_cast<double>(duration.count()),
         speed,
         written,
-        "顺序写入测试"
+        "Sequential Write Test"
     );
 }
 
-// 顺序读取测试
+// Sequential Read Test
 TestResult sequential_read_test(SDCard& sd_card, size_t file_size) {
     auto start = high_resolution_clock::now();
     size_t total_read = 0;
     
     auto file_result = sd_card.open_file("/seq_test.bin", "r");
     if (file_result.is_error()) {
-        return TestResult(0, 0, 0, "顺序读取测试（失败）");
+        return TestResult(0, 0, 0, "Sequential Read Test (Failed)");
     }
     
     auto& file = *file_result;
@@ -378,11 +378,11 @@ TestResult sequential_read_test(SDCard& sd_card, size_t file_size) {
         static_cast<double>(duration.count()),
         speed,
         total_read,
-        "顺序读取测试"
+        "Sequential Read Test"
     );
 }
 
-// 小文件批量操作测试
+// Small File Batch Operation Test
 TestResult small_files_test(SDCard& sd_card) {
     TestDataGenerator gen;
     auto start = high_resolution_clock::now();
@@ -390,7 +390,7 @@ TestResult small_files_test(SDCard& sd_card) {
     
     auto dir_result = sd_card.create_directory("/test_files");
     if (dir_result.is_error()) {
-        return TestResult(0, 0, 0, "小文件测试（失败）");
+        return TestResult(0, 0, 0, "Small File Test (Failed)");
     }
     
     for (int i = 0; i < NUM_FILES; ++i) {
@@ -419,17 +419,17 @@ TestResult small_files_test(SDCard& sd_card) {
         static_cast<double>(duration.count()),
         speed,
         total_bytes,
-        "小文件批量操作测试"
+        "Small File Batch Operation Test"
     );
 }
 
-// 压力测试
+// Stress Test
 TestResult stress_test(SDCard& sd_card) {
     TestDataGenerator gen;
     auto start = high_resolution_clock::now();
     size_t total_bytes = 0;
     const auto test_duration = seconds(TEST_DURATION);
-    printf("开始压力测试，持续时间：%d秒\n", TEST_DURATION);
+    printf("Starting stress test, duration: %d seconds\n", TEST_DURATION);
     
     auto test_start = high_resolution_clock::now();
     int last_seconds = TEST_DURATION;
@@ -437,7 +437,7 @@ TestResult stress_test(SDCard& sd_card) {
     while (duration_cast<seconds>(high_resolution_clock::now() - test_start) < test_duration) {
         int remaining = TEST_DURATION - duration_cast<seconds>(high_resolution_clock::now() - test_start).count();
         if (remaining < last_seconds) {
-            printf("\r剩余时间：%d秒 ", remaining);
+            printf("\rRemaining time: %d seconds ", remaining);
             fflush(stdout);
             last_seconds = remaining;
         }
@@ -447,16 +447,16 @@ TestResult stress_test(SDCard& sd_card) {
         
         auto file_result = sd_card.open_file(filename, "w");
         if (file_result.is_error()) {
-            printf("\n创建压力测试文件失败\n");
-            return TestResult(0, 0, 0, "压力测试（失败）");
+            printf("\nFailed to create stress test file\n");
+            return TestResult(0, 0, 0, "Stress Test (Failed)");
         }
         
         auto& file = *file_result;
         auto write_result = file.write(std::vector<uint8_t>(chunk.begin(), chunk.begin() + SMALL_FILE_SIZE));
         if (write_result.is_error()) {
-            printf("\n写入压力测试文件失败\n");
+            printf("\nFailed to write to stress test file\n");
             file.close();
-            return TestResult(0, 0, 0, "压力测试（失败）");
+            return TestResult(0, 0, 0, "Stress Test (Failed)");
         }
         
         file.close();
@@ -464,30 +464,30 @@ TestResult stress_test(SDCard& sd_card) {
         
         auto read_file_result = sd_card.open_file(filename, "r");
         if (read_file_result.is_error()) {
-            printf("\n打开压力测试文件失败\n");
-            return TestResult(0, 0, 0, "压力测试（失败）");
+            printf("\nFailed to open stress test file\n");
+            return TestResult(0, 0, 0, "Stress Test (Failed)");
         }
         
         auto& read_file = *read_file_result;
         auto read_result = read_file.read(SMALL_FILE_SIZE);
         if (read_result.is_error()) {
-            printf("\n读取压力测试文件失败\n");
+            printf("\nFailed to read stress test file\n");
             read_file.close();
-            return TestResult(0, 0, 0, "压力测试（失败）");
+            return TestResult(0, 0, 0, "Stress Test (Failed)");
         }
         
         read_file.close();
         
         auto delete_result = sd_card.delete_file(filename);
         if (delete_result.is_error()) {
-            printf("\n删除压力测试文件失败\n");
-            return TestResult(0, 0, 0, "压力测试（失败）");
+            printf("\nFailed to delete stress test file\n");
+            return TestResult(0, 0, 0, "Stress Test (Failed)");
         }
         
         sleep_ms(100);
     }
     
-    printf("\n压力测试完成！\n");
+    printf("\nStress Test Completed!\n");
     
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(end - start);
@@ -497,11 +497,11 @@ TestResult stress_test(SDCard& sd_card) {
         static_cast<double>(duration.count()),
         speed,
         total_bytes * 2,
-        "压力测试"
+        "Stress Test"
     );
 }
 
-// 大文件测试
+// Large File Test
 TestResult large_file_test(SDCard& sd_card) {
     TestDataGenerator gen;
     auto start = high_resolution_clock::now();
@@ -509,7 +509,7 @@ TestResult large_file_test(SDCard& sd_card) {
     
     auto file_result = sd_card.open_file("/large_test.bin", "w");
     if (file_result.is_error()) {
-        return TestResult(0, 0, 0, "大文件测试（失败）");
+        return TestResult(0, 0, 0, "Large File Test (Failed)");
     }
     
     auto& file = *file_result;
@@ -522,7 +522,7 @@ TestResult large_file_test(SDCard& sd_card) {
         auto write_result = file.write(std::vector<uint8_t>(chunk.begin(), chunk.begin() + to_write));
         if (write_result.is_error()) {
             file.close();
-            return TestResult(0, 0, 0, "大文件测试（失败）");
+            return TestResult(0, 0, 0, "Large File Test (Failed)");
         }
         
         total_bytes += to_write;
@@ -533,7 +533,7 @@ TestResult large_file_test(SDCard& sd_card) {
     
     file_result = sd_card.open_file("/large_test.bin", "r");
     if (file_result.is_error()) {
-        return TestResult(0, 0, 0, "大文件测试（失败）");
+        return TestResult(0, 0, 0, "Large File Test (Failed)");
     }
     
     auto& read_file = *file_result;
@@ -545,7 +545,7 @@ TestResult large_file_test(SDCard& sd_card) {
         
         if (read_result.is_error() || read_result->empty()) {
             read_file.close();
-            return TestResult(0, 0, 0, "大文件测试（失败）");
+            return TestResult(0, 0, 0, "Large File Test (Failed)");
         }
         
         remaining -= read_result->size();
@@ -561,105 +561,105 @@ TestResult large_file_test(SDCard& sd_card) {
         static_cast<double>(duration.count()),
         speed,
         total_bytes * 2,
-        "大文件读写测试"
+        "Large File Read/Write Test"
     );
 }
 
 int main() {
     stdio_init_all();
-    sleep_ms(3000); // 等待串口连接
+    sleep_ms(3000); // Wait for serial connection
     
-    printf("\n=== MicroSD卡综合测试程序 ===\n\n");
-    printf("编译时间: %s %s\n", __DATE__, __TIME__);
+    printf("\n=== Comprehensive MicroSD Card Test Program ===\n\n");
+    printf("Compilation Time: %s %s\n", __DATE__, __TIME__);
     printf("========================================\n\n");
     
-    // 初始化SD卡
+    // Initialize SD Card
     SDCard sd_card;
     auto init_result = sd_card.initialize();
     if (init_result.is_error()) {
-        printf("SD卡初始化失败\n");
+        printf("SD Card Initialization Failed\n");
         return 1;
     }
     
-    // 获取容量信息
+    // Get Capacity Information
     auto capacity_result = sd_card.get_capacity();
     if (capacity_result.is_ok()) {
         auto [total, free] = *capacity_result;
-        printf("SD卡总容量: %.2f GB\n", total / (1024.0 * 1024.0 * 1024.0));
-        printf("可用空间: %.2f GB\n", free / (1024.0 * 1024.0 * 1024.0));
-        printf("文件系统类型: %s\n\n", sd_card.get_filesystem_type().c_str());
+        printf("SD Card Total Capacity: %.2f GB\n", total / (1024.0 * 1024.0 * 1024.0));
+        printf("Available Space: %.2f GB\n", free / (1024.0 * 1024.0 * 1024.0));
+        printf("Filesystem Type: %s\n\n", sd_card.get_filesystem_type().c_str());
     }
     
-    // 提示格式化
-    printf("警告：性能测试需要先格式化SD卡！\n");
-    printf("格式化将清除卡上的所有数据！\n");
+    // Prompt Formatting
+    printf("Warning: Performance Test Requires Formatting SD Card!\n");
+    printf("Formatting Will Clear All Data on the SD Card!\n");
     
-    if (!wait_for_user_confirmation("是否继续？这将删除SD卡上的所有数据")) {
-        printf("测试已取消\n");
+    if (!wait_for_user_confirmation("Continue? This Will Delete All Data on the SD Card")) {
+        printf("Test Cancelled\n");
         return 0;
     }
     
-    printf("正在格式化SD卡...\n");
+    printf("Formatting SD Card...\n");
     auto format_result = sd_card.format("FAT32");
     if (format_result.is_error()) {
-        printf("格式化失败：%s\n", sd_card.get_error_description(format_result.error_code()).c_str());
+        printf("Formatting Failed: %s\n", sd_card.get_error_description(format_result.error_code()).c_str());
         return 1;
     }
-    printf("格式化完成！\n\n");
+    printf("Formatting Completed!\n\n");
     
-    // 重新挂载文件系统
+    // Re-mount File System
     init_result = sd_card.initialize();
     if (init_result.is_error()) {
-        printf("重新挂载文件系统失败\n");
+        printf("Failed to Re-mount File System\n");
         return 1;
     }
     
-    // 显示格式化后的容量信息
+    // Display Formatted Capacity Information
     capacity_result = sd_card.get_capacity();
     if (capacity_result.is_ok()) {
         auto [total, free] = *capacity_result;
-        printf("格式化后容量信息：\n");
-        printf("总容量: %.2f GB\n", total / (1024.0 * 1024.0 * 1024.0));
-        printf("可用空间: %.2f GB\n", free / (1024.0 * 1024.0 * 1024.0));
-        printf("文件系统类型: %s\n\n", sd_card.get_filesystem_type().c_str());
+        printf("Formatted Capacity Information:\n");
+        printf("Total Capacity: %.2f GB\n", total / (1024.0 * 1024.0 * 1024.0));
+        printf("Available Space: %.2f GB\n", free / (1024.0 * 1024.0 * 1024.0));
+        printf("Filesystem Type: %s\n\n", sd_card.get_filesystem_type().c_str());
     }
     
-    if (!wait_for_user_confirmation("是否开始测试？")) {
-        printf("测试已取消\n");
+    if (!wait_for_user_confirmation("Start Test?")) {
+        printf("Test Cancelled\n");
         return 0;
     }
     
-    // 运行基本功能测试
+    // Run Basic Function Test
     demonstrate_basic_operations(sd_card);
     
-    // 运行高级功能测试
+    // Run Advanced Function Test
     demonstrate_advanced_operations(sd_card);
     
-    // 运行性能测试
+    // Run Performance Test
     TestResults results;
     
-    printf("\n=== 开始性能测试 ===\n");
+    printf("\n=== Starting Performance Test ===\n");
     
-    printf("\n运行顺序写入测试...\n");
+    printf("\nRunning Sequential Write Test...\n");
     results.add(sequential_write_test(sd_card, LARGE_FILE_SIZE));
     
-    printf("\n运行顺序读取测试...\n");
+    printf("\nRunning Sequential Read Test...\n");
     results.add(sequential_read_test(sd_card, LARGE_FILE_SIZE));
     
-    printf("\n运行小文件测试...\n");
+    printf("\nRunning Small File Test...\n");
     results.add(small_files_test(sd_card));
     
-    printf("\n运行压力测试...\n");
+    printf("\nRunning Stress Test...\n");
     results.add(stress_test(sd_card));
     
-    printf("\n运行大文件测试...\n");
+    printf("\nRunning Large File Test...\n");
     results.add(large_file_test(sd_card));
     
-    // 打印测试结果汇总
+    // Print Test Results Summary
     results.print_summary();
     
-    printf("\n=== 所有测试已完成！===\n");
-    printf("测试结果已保存，程序将继续运行以保持串口连接。\n");
+    printf("\n=== All Tests Completed!===\n");
+    printf("Test Results Saved, Program Will Continue to Run to Maintain Serial Connection.\n");
     
     while (true) {
         sleep_ms(1000);
