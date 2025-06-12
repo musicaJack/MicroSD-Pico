@@ -229,13 +229,17 @@ Result<void> SDCard::initialize() {
 }
 
 std::string SDCard::get_filesystem_type() const {
-    if (!is_mounted_) return "NOT_MOUNTED";
-    
-    const char* fs_type_str[] = {"NOT_MOUNTED", "FAT12", "FAT16", "FAT32", "EXFAT"};
-    if (fs_type_ < sizeof(fs_type_str) / sizeof(char*)) {
-        return fs_type_str[fs_type_];
+    if (!is_mounted_) {
+        return "未挂载";
     }
-    return "UNKNOWN";
+    
+    switch (fs_type_) {
+        case FS_FAT12: return "FAT12";
+        case FS_FAT16: return "FAT16"; 
+        case FS_FAT32: return "FAT32";
+        case FS_EXFAT: return "exFAT";
+        default: return "未知(" + std::to_string(fs_type_) + ")";
+    }
 }
 
 Result<std::pair<size_t, size_t>> SDCard::get_capacity() const {
@@ -252,8 +256,31 @@ Result<std::pair<size_t, size_t>> SDCard::get_capacity() const {
                                                   "获取容量信息失败");
     }
     
-    size_t total_bytes = (size_t)(fs->n_fatent - 2) * fs->csize * 512;
-    size_t free_bytes = (size_t)free_clusters * fs->csize * 512;
+    // 计算总容量和可用容量
+    // fs->n_fatent: FAT表中的总条目数（包括保留的前两个条目）
+    // fs->csize: 每个簇的扇区数
+    // 512: 每个扇区的字节数（标准）
+    
+    size_t total_clusters = fs->n_fatent - 2;  // 减去保留的两个FAT条目
+    size_t sectors_per_cluster = fs->csize;
+    size_t bytes_per_sector = 512;  // 标准扇区大小
+    
+    size_t total_bytes = total_clusters * sectors_per_cluster * bytes_per_sector;
+    size_t free_bytes = (size_t)free_clusters * sectors_per_cluster * bytes_per_sector;
+    
+    // 调试信息（可以通过编译宏控制）
+    #ifdef MICRO_SD_DEBUG
+    printf("Debug - Capacity calculation:\n");
+    printf("  Total FAT entries: %lu\n", (unsigned long)fs->n_fatent);
+    printf("  Data clusters: %zu\n", total_clusters);
+    printf("  Free clusters: %lu\n", (unsigned long)free_clusters);
+    printf("  Sectors per cluster: %zu\n", sectors_per_cluster);
+    printf("  Bytes per sector: %zu\n", bytes_per_sector);
+    printf("  Calculated total: %zu bytes (%.2f MB)\n", 
+           total_bytes, total_bytes / 1024.0 / 1024.0);
+    printf("  Calculated free: %zu bytes (%.2f MB)\n", 
+           free_bytes, free_bytes / 1024.0 / 1024.0);
+    #endif
     
     return Result<std::pair<size_t, size_t>>({total_bytes, free_bytes});
 }
@@ -791,14 +818,27 @@ Result<void> SDCard::format(const std::string& fs_type) {
     BYTE work[FF_MAX_SS]; // Work area for f_mkfs
 
     // 设置MKFS参数
-    MKFS_PARM mkfs_opt;
-    mkfs_opt.fmt = FM_FAT32;        // 使用FAT32格式
-    mkfs_opt.n_fat = 1;             // FAT副本数
-    mkfs_opt.align = 0;             // 对齐设置
-    mkfs_opt.n_root = 512;          // 根目录条目数
-    mkfs_opt.au_size = 0;           // 分配单元大小(自动)
+    MKFS_PARM opt;
+    std::memset(&opt, 0, sizeof(opt));  // 清零所有字段
 
-    FRESULT fr = f_mkfs("", &mkfs_opt, work, sizeof(work));
+    // 根据文件系统类型选择格式化选项
+    if (fs_type == "FAT32") {
+        opt.fmt = FS_FAT32;
+    } else if (fs_type == "FAT16") {
+        opt.fmt = FS_FAT16;
+    } else if (fs_type == "exFAT") {
+        opt.fmt = FS_EXFAT;
+    } else {
+        opt.fmt = FS_FAT32;  // 默认使用FAT32
+    }
+
+    opt.n_fat = 1;      // FAT表数量
+    opt.align = 0;      // 自动对齐
+    opt.n_root = 512;   // 根目录项数
+    opt.au_size = 0;    // 自动选择簇大小
+
+    // 调用f_mkfs格式化
+    FRESULT fr = f_mkfs("", &opt, work, sizeof(work));
     
     if (fr != FR_OK) {
         return Result<void>(ErrorCode::FATFS_ERROR, 

@@ -24,22 +24,9 @@
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
 #include "ff.h"
+#include "spi_config.hpp"
 
 namespace MicroSD {
-
-/**
- * @brief SPI配置结构体
- */
-struct SPIConfig {
-    spi_inst_t* spi_port = spi0;          // SPI端口
-    uint32_t clk_slow = 400 * 1000;       // 慢时钟频率 (400KHz 初始化用)
-    uint32_t clk_fast = 40 * 1000 * 1000; // 快时钟频率 (40MHz 正常操作用)
-    uint pin_miso = 11;                   // MISO引脚 (GPIO11)
-    uint pin_cs = 13;                     // CS引脚 (GPIO13)
-    uint pin_sck = 10;                    // SCK引脚 (GPIO10)
-    uint pin_mosi = 12;                   // MOSI引脚 (GPIO12)
-    bool use_internal_pullup = true;      // 使用内部上拉电阻
-};
 
 /**
  * @brief 文件信息结构体

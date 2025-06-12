@@ -92,7 +92,7 @@ cmake .. ^
 
 if %ERRORLEVEL% NEQ 0 (
     echo CMake configuration failed!
-    goto :show_solutions
+    cd ..
 )
 
 echo Building with ninja...
@@ -101,100 +101,5 @@ ninja -j8
 if %ERRORLEVEL% NEQ 0 (
     echo Ninja build failed!
     echo Checking detailed error information...
-    goto :show_solutions
+    cd ..
 )
-
-:check_output
-echo Checking generated files...
-
-rem Check for UF2 files
-set UF2_FOUND=0
-if exist "basic_example.uf2" (
-    echo ✓ Found: basic_example.uf2
-    set UF2_FOUND=1
-)
-if exist "advanced_example.uf2" (
-    echo ✓ Found: advanced_example.uf2
-    set UF2_FOUND=1
-)
-if exist "debug_example.uf2" (
-    echo ✓ Found: debug_example.uf2
-    set UF2_FOUND=1
-)
-if exist "serial_test.uf2" (
-    echo ✓ Found: serial_test.uf2
-    set UF2_FOUND=1
-)
-
-if %UF2_FOUND%==1 (
-    echo.
-    echo ========== BUILD SUCCESSFUL! ==========
-    echo UF2 files generated in build directory
-    echo.
-    echo Usage Instructions:
-    echo 1. Hold the BOOTSEL button on your Pico
-    echo 2. Connect Pico to computer via USB
-    echo 3. Release BOOTSEL button (RPI-RP2 drive should appear)
-    echo 4. Drag any .uf2 file to the drive
-    echo 5. Pico will restart and run the program
-    echo.
-    echo Debug Output:
-    echo - USB serial output enabled (115200 baud rate)
-    echo - Use serial monitor to view debug information
-    echo.
-    echo Hardware Connections (MicroSD Module):
-    echo VCC  - 3.3V  (Pin 36)
-    echo GND  - GND   (Pin 38)
-    echo MISO - GPIO11 (Pin 15)
-    echo MOSI - GPIO12 (Pin 16)
-    echo SCK  - GPIO10 (Pin 14)
-    echo CS   - GPIO13 (Pin 17)
-    goto :success_end
-) else (
-    echo Build completed but no UF2 files found
-    echo This may be due to errors during the build process
-    goto :show_solutions
-)
-
-:show_solutions
-echo.
-echo ==== TROUBLESHOOTING ====
-echo.
-echo 1. Check environment variable configuration:
-echo    PICO_SDK_PATH=%PICO_SDK_PATH%
-echo    ARM_TOOLCHAIN_PATH=%ARM_TOOLCHAIN_PATH%
-echo.
-echo 2. Verify toolchain:
-echo    arm-none-eabi-gcc --version
-echo    ninja --version
-echo    cmake --version
-echo.
-echo 3. Check Pico SDK installation:
-echo    Ensure the following directories exist:
-echo    - %PICO_SDK_PATH%
-echo    - %ARM_TOOLCHAIN_PATH%
-echo    - %NINJA_PATH%
-echo.
-echo 4. If problems persist, check:
-echo    - Pico SDK is completely installed
-echo    - Environment variables are correctly set
-echo    - You have permissions to access installation directory
-echo.
-
-:success_end
-echo.
-echo Output files in build directory:
-for %%f in (*.uf2) do echo   %%f
-for %%f in (*.elf) do echo   %%f
-
-cd ..
-
-if %UF2_FOUND%==1 (
-    echo.
-    set /p OPEN_FOLDER=Open build folder to view UF2 files? (y/n): 
-    if /i "%OPEN_FOLDER%"=="y" (
-        explorer build
-    )
-)
-
-pause 

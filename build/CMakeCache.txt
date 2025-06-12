@@ -15,80 +15,50 @@
 ########################
 
 //Path to a program.
-CMAKE_ADDR2LINE:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-addr2line.exe
+CMAKE_ADDR2LINE:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-addr2line.exe
 
 //Path to a program.
-CMAKE_AR:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-ar.exe
+CMAKE_AR:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-ar.exe
 
 //ASM compiler
-CMAKE_ASM_COMPILER:STRING=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-gcc.exe
+CMAKE_ASM_COMPILER:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-gcc.exe
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_ASM_COMPILER_AR:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-gcc-ar.exe
+CMAKE_ASM_COMPILER_AR:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-gcc-ar.exe
 
 //A wrapper around 'ranlib' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_ASM_COMPILER_RANLIB:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-gcc-ranlib.exe
-
-//Flags used by the ASM compiler during all build types.
-CMAKE_ASM_FLAGS:STRING=-mcpu=cortex-m0plus -mthumb
-
-//Flags used by the ASM compiler during DEBUG builds.
-CMAKE_ASM_FLAGS_DEBUG:STRING=-g
-
-//Flags used by the ASM compiler during MINSIZEREL builds.
-CMAKE_ASM_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG
-
-//Flags used by the ASM compiler during RELEASE builds.
-CMAKE_ASM_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
-
-//Flags used by the ASM compiler during RELWITHDEBINFO builds.
-CMAKE_ASM_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
+CMAKE_ASM_COMPILER_RANLIB:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-gcc-ranlib.exe
 
 //Choose the type of build, options are: None Debug Release RelWithDebInfo
 // MinSizeRel ...
-CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_BUILD_TYPE:STRING=
 
 //CXX compiler
-CMAKE_CXX_COMPILER:STRING=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-g++.exe
+CMAKE_CXX_COMPILER:STRING=c:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-g++.exe
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_CXX_COMPILER_AR:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-gcc-ar.exe
+CMAKE_CXX_COMPILER_AR:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-gcc-ar.exe
 
 //A wrapper around 'ranlib' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_CXX_COMPILER_RANLIB:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-gcc-ranlib.exe
-
-//Flags used by the CXX compiler during all build types.
-CMAKE_CXX_FLAGS:STRING=-mcpu=cortex-m0plus -mthumb
-
-//Flags used by the CXX compiler during DEBUG builds.
-CMAKE_CXX_FLAGS_DEBUG:STRING=-g
-
-//Flags used by the CXX compiler during MINSIZEREL builds.
-CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG
-
-//Flags used by the CXX compiler during RELEASE builds.
-CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
-
-//Flags used by the CXX compiler during RELWITHDEBINFO builds.
-CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
+CMAKE_CXX_COMPILER_RANLIB:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-gcc-ranlib.exe
 
 //C compiler
-CMAKE_C_COMPILER:STRING=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-gcc.exe
+CMAKE_C_COMPILER:STRING=c:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-gcc.exe
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_C_COMPILER_AR:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-gcc-ar.exe
+CMAKE_C_COMPILER_AR:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-gcc-ar.exe
 
 //A wrapper around 'ranlib' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_C_COMPILER_RANLIB:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-gcc-ranlib.exe
+CMAKE_C_COMPILER_RANLIB:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-gcc-ranlib.exe
 
 //Flags used by the C compiler during all build types.
-CMAKE_C_FLAGS:STRING=-mcpu=cortex-m0plus -mthumb
+CMAKE_C_FLAGS:STRING=
 
 //Flags used by the C compiler during DEBUG builds.
 CMAKE_C_FLAGS_DEBUG:STRING=-g
@@ -101,6 +71,9 @@ CMAKE_C_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
 
 //Flags used by the C compiler during RELWITHDEBINFO builds.
 CMAKE_C_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
+
+//Libraries linked by default with all C applications.
+CMAKE_C_STANDARD_LIBRARIES:STRING=-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
 
 //Path to a program.
 CMAKE_DLLTOOL:FILEPATH=C:/Program Files/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/dlltool.exe
@@ -130,7 +103,7 @@ CMAKE_FIND_PACKAGE_REDIRECTS_DIR:STATIC=C:/Users/sh_mu/code/MicroSD-Pico/build/C
 CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/MicroSD-Pico
 
 //Path to a program.
-CMAKE_LINKER:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-ld.exe
+CMAKE_LINKER:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-ld.exe
 
 //make program
 CMAKE_MAKE_PROGRAM:FILEPATH=C:/PROGRA~1/RASPBE~1/PICOSD~1.1/ninja/ninja.exe
@@ -156,13 +129,13 @@ CMAKE_MODULE_LINKER_FLAGS_RELEASE:STRING=
 CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //Path to a program.
-CMAKE_NM:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-nm.exe
+CMAKE_NM:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-nm.exe
 
 //Path to a program.
-CMAKE_OBJCOPY:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-objcopy.exe
+CMAKE_OBJCOPY:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-objcopy.exe
 
 //Path to a program.
-CMAKE_OBJDUMP:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-objdump.exe
+CMAKE_OBJDUMP:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-objdump.exe
 
 //Value Computed by CMake
 CMAKE_PROJECT_DESCRIPTION:STATIC=
@@ -174,10 +147,28 @@ CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 CMAKE_PROJECT_NAME:STATIC=MicroSD-Pico
 
 //Path to a program.
-CMAKE_RANLIB:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-ranlib.exe
+CMAKE_RANLIB:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-ranlib.exe
+
+//RC compiler
+CMAKE_RC_COMPILER:FILEPATH=C:/Program Files/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/windres.exe
+
+//Flags for Windows Resource Compiler during all build types.
+CMAKE_RC_FLAGS:STRING=
+
+//Flags for Windows Resource Compiler during DEBUG builds.
+CMAKE_RC_FLAGS_DEBUG:STRING=
+
+//Flags for Windows Resource Compiler during MINSIZEREL builds.
+CMAKE_RC_FLAGS_MINSIZEREL:STRING=
+
+//Flags for Windows Resource Compiler during RELEASE builds.
+CMAKE_RC_FLAGS_RELEASE:STRING=
+
+//Flags for Windows Resource Compiler during RELWITHDEBINFO builds.
+CMAKE_RC_FLAGS_RELWITHDEBINFO:STRING=
 
 //Path to a program.
-CMAKE_READELF:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-readelf.exe
+CMAKE_READELF:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-readelf.exe
 
 //Flags used by the linker during the creation of shared libraries
 // during all build types.
@@ -227,28 +218,13 @@ CMAKE_STATIC_LINKER_FLAGS_RELEASE:STRING=
 CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //Path to a program.
-CMAKE_STRIP:FILEPATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/gcc-arm-none-eabi/bin/arm-none-eabi-strip.exe
-
-//No help, variable specified on the command line.
-CMAKE_SYSTEM_NAME:UNINITIALIZED=Generic
-
-//No help, variable specified on the command line.
-CMAKE_SYSTEM_PROCESSOR:UNINITIALIZED=arm
-
-//No help, variable specified on the command line.
-CMAKE_TRY_COMPILE_TARGET_TYPE:UNINITIALIZED=STATIC_LIBRARY
+CMAKE_STRIP:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-strip.exe
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
 // during the make.  This is useful for debugging only. With Visual
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
-
-//Dot tool for use with Doxygen
-DOXYGEN_DOT_EXECUTABLE:FILEPATH=DOXYGEN_DOT_EXECUTABLE-NOTFOUND
-
-//Doxygen documentation generation tool (https://www.doxygen.nl)
-DOXYGEN_EXECUTABLE:FILEPATH=DOXYGEN_EXECUTABLE-NOTFOUND
 
 //Value Computed by CMake
 MicroSD-Pico_BINARY_DIR:STATIC=C:/Users/sh_mu/code/MicroSD-Pico/build
@@ -258,76 +234,6 @@ MicroSD-Pico_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 MicroSD-Pico_SOURCE_DIR:STATIC=C:/Users/sh_mu/code/MicroSD-Pico
-
-//PICO target board (e.g. pico)
-PICO_BOARD:STRING=pico
-
-//PICO board header directories
-PICO_BOARD_HEADER_DIRS:STRING=
-
-//Build HTML Doxygen docs
-PICO_BUILD_DOCS:BOOL=OFF
-
-//Default binaries to Copy code to RAM when booting from flash
-PICO_COPY_TO_RAM:BOOL=OFF
-
-//boot stage 2 short name
-PICO_DEFAULT_BOOT_STAGE2:STRING=compile_time_choice
-
-//Set to ON to fetch copy of PICO EXTRAS from git if not otherwise
-// locatable
-PICO_EXTRAS_FETCH_FROM_GIT:BOOL=
-
-//location to download EXTRAS
-PICO_EXTRAS_FETCH_FROM_GIT_PATH:FILEPATH=
-
-//Path to the PICO EXTRAS
-PICO_EXTRAS_PATH:PATH=C:/Users/sh_mu/Documents/Pico-v1.5.1/pico-extras
-
-//Default binaries to not not use flash
-PICO_NO_FLASH:BOOL=OFF
-
-//PICO Build platform (e.g. rp2040, host)
-PICO_PLATFORM:STRING=rp2040
-
-//Set to ON to fetch copy of SDK from git if not otherwise locatable
-PICO_SDK_FETCH_FROM_GIT:BOOL=
-
-//location to download SDK
-PICO_SDK_FETCH_FROM_GIT_PATH:FILEPATH=
-
-//Path to the Raspberry Pi Pico SDK
-PICO_SDK_PATH:PATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk
-
-//Globally enable stdio semi-hosting
-PICO_STDIO_SEMIHOSTING:BOOL=OFF
-
-//Globally enable stdio UART
-PICO_STDIO_UART:BOOL=ON
-
-//Globally enable stdio USB
-PICO_STDIO_USB:BOOL=OFF
-
-//The directory containing a CMake configuration file for pico-sdk-tools.
-pico-sdk-tools_DIR:PATH=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk-tools
-
-//Value Computed by CMake
-pico_extras_BINARY_DIR:STATIC=C:/Users/sh_mu/code/MicroSD-Pico/build/pico_extras
-
-//Value Computed by CMake
-pico_extras_IS_TOP_LEVEL:STATIC=OFF
-
-//Value Computed by CMake
-pico_extras_SOURCE_DIR:STATIC=C:/Users/sh_mu/Documents/Pico-v1.5.1/pico-extras
-
-//Value Computed by CMake
-pico_sdk_BINARY_DIR:STATIC=C:/Users/sh_mu/code/MicroSD-Pico/build/pico-sdk
-
-//Value Computed by CMake
-pico_sdk_IS_TOP_LEVEL:STATIC=OFF
-
-//Value Computed by CMake
-pico_sdk_SOURCE_DIR:STATIC=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk
 
 
 ########################
@@ -344,17 +250,6 @@ CMAKE_ASM_COMPILER-ADVANCED:INTERNAL=1
 CMAKE_ASM_COMPILER_AR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_ASM_COMPILER_RANLIB
 CMAKE_ASM_COMPILER_RANLIB-ADVANCED:INTERNAL=1
-CMAKE_ASM_COMPILER_WORKS:INTERNAL=1
-//ADVANCED property for variable: CMAKE_ASM_FLAGS
-CMAKE_ASM_FLAGS-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_ASM_FLAGS_DEBUG
-CMAKE_ASM_FLAGS_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_ASM_FLAGS_MINSIZEREL
-CMAKE_ASM_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_ASM_FLAGS_RELEASE
-CMAKE_ASM_FLAGS_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_ASM_FLAGS_RELWITHDEBINFO
-CMAKE_ASM_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //This is the directory where this CMakeCache.txt was created
 CMAKE_CACHEFILE_DIR:INTERNAL=c:/Users/sh_mu/code/MicroSD-Pico/build
 //Major version of cmake used to create the current loaded cache
@@ -375,16 +270,6 @@ CMAKE_CXX_COMPILER-ADVANCED:INTERNAL=1
 CMAKE_CXX_COMPILER_AR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_CXX_COMPILER_RANLIB
 CMAKE_CXX_COMPILER_RANLIB-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_CXX_FLAGS
-CMAKE_CXX_FLAGS-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_CXX_FLAGS_DEBUG
-CMAKE_CXX_FLAGS_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_CXX_FLAGS_MINSIZEREL
-CMAKE_CXX_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_CXX_FLAGS_RELEASE
-CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_CXX_FLAGS_RELWITHDEBINFO
-CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_COMPILER
 CMAKE_C_COMPILER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_COMPILER_AR
@@ -401,6 +286,8 @@ CMAKE_C_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
 CMAKE_C_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_FLAGS_RELWITHDEBINFO
 CMAKE_C_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_C_STANDARD_LIBRARIES
+CMAKE_C_STANDARD_LIBRARIES-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_DLLTOOL
 CMAKE_DLLTOOL-ADVANCED:INTERNAL=1
 //Path to cache edit program executable.
@@ -449,7 +336,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=102
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -458,6 +345,19 @@ CMAKE_OBJDUMP-ADVANCED:INTERNAL=1
 CMAKE_PLATFORM_INFO_INITIALIZED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_RANLIB
 CMAKE_RANLIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_RC_COMPILER
+CMAKE_RC_COMPILER-ADVANCED:INTERNAL=1
+CMAKE_RC_COMPILER_WORKS:INTERNAL=1
+//ADVANCED property for variable: CMAKE_RC_FLAGS
+CMAKE_RC_FLAGS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_RC_FLAGS_DEBUG
+CMAKE_RC_FLAGS_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_RC_FLAGS_MINSIZEREL
+CMAKE_RC_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_RC_FLAGS_RELEASE
+CMAKE_RC_FLAGS_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_RC_FLAGS_RELWITHDEBINFO
+CMAKE_RC_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_READELF
 CMAKE_READELF-ADVANCED:INTERNAL=1
 //Path to CMake installation.
@@ -488,36 +388,8 @@ CMAKE_STATIC_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_STRIP
 CMAKE_STRIP-ADVANCED:INTERNAL=1
-CMAKE_TOOLCHAIN_FILE:INTERNAL=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/cmake/preload/toolchains/pico_arm_gcc.cmake
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: DOXYGEN_DOT_EXECUTABLE
-DOXYGEN_DOT_EXECUTABLE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: DOXYGEN_EXECUTABLE
-DOXYGEN_EXECUTABLE-ADVANCED:INTERNAL=1
-FAMILY_MCUS:INTERNAL=RP2040
-//Details about finding Python3
-FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[C:/Python312/python.exe][cfound components: Interpreter ][v3.12.2()]
-PICO_BOOT_STAGE2_DIR:INTERNAL=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/src/rp2_common/boot_stage2
-PICO_CMAKE_PRELOAD_PLATFORM_DIR:INTERNAL=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/cmake/preload/platforms
-PICO_CMAKE_PRELOAD_PLATFORM_FILE:INTERNAL=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/cmake/preload/platforms/rp2040.cmake
-PICO_DOXYGEN_EXCLUDE_PATHS:INTERNAL= C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/src/rp2_common/cmsis C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/src/rp2040/hardware_regs
-PICO_DOXYGEN_PATHS:INTERNAL= C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/src/common C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/lib/cyw43-driver/src C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/src/rp2_common C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/src/rp2040
-PICO_NO_HARDWARE:INTERNAL=0
-PICO_ON_DEVICE:INTERNAL=1
-PICO_PLATFORM_CMAKE_FILE:INTERNAL=C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk/src/rp2040.cmake
-//Enable build of SDK tests
-PICO_SDK_TESTS_ENABLED:INTERNAL=
-PICO_TOOLCHAIN_PATH:INTERNAL=
-//Compiler reason failure
-_Python3_Compiler_REASON_FAILURE:INTERNAL=
-//Development reason failure
-_Python3_Development_REASON_FAILURE:INTERNAL=
-//Path to a program.
-_Python3_EXECUTABLE:INTERNAL=C:/Python312/python.exe
-//Python3 Properties
-_Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;12;2;32;;;C:\Python312\Lib;C:\Python312\Lib;C:\Python312\Lib\site-packages;C:\Python312\Lib\site-packages
-_Python3_INTERPRETER_SIGNATURE:INTERNAL=0a4d320222ea8b2067a9f0f982b0c9f3
-//NumPy reason failure
-_Python3_NumPy_REASON_FAILURE:INTERNAL=
+//linker supports push/pop state
+_CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
 

@@ -27,10 +27,10 @@ MicroSD Module    Raspberry Pi Pico
 --------------    -----------------
 VCC            -> 3.3V (Pin 36)
 GND            -> GND  (Pin 38)  
-MISO           -> GPIO11 (Pin 15)
-MOSI           -> GPIO12 (Pin 16)
-SCK            -> GPIO10 (Pin 14)
-CS             -> GPIO13 (Pin 17)
+MISO           -> GPIO7 (Pin 10)
+MOSI           -> GPIO0 (Pin 1)
+SCK            -> GPIO6 (Pin 9)
+CS             -> GPIO1 (Pin 2)
 ```
 
 ## 🚀 Quick Start
@@ -64,54 +64,36 @@ cd MicroSD-Pico
 3. **Flash to Pico:**
 - Hold the BOOTSEL button on your Pico
 - Connect via USB (RPI-RP2 drive should appear)
-- Drag any `.uf2` file from the `build` directory
+- Drag the `performance_test.uf2` file from the `build` directory
 - Release BOOTSEL and the program will start
 
-## 📁 Generated Programs
+## 📁 Test Program
 
-After building, you'll find these UF2 files in the `build` directory:
+After building, you'll find the `performance_test.uf2` file in the `build` directory:
 
-### 🧪 `serial_test.uf2`
-**Purpose:** Test serial communication without SD card dependency
+### 🧪 `performance_test.uf2`
+**Purpose:** Comprehensive test program for MicroSD functionality
 ```
 Features:
-- Countdown timer display
-- Heartbeat messages every 5 seconds  
-- LED blinking indicator
-- System status information
+1. Basic Function Tests
+   - File system information
+   - Basic file operations (create, read, write, delete)
+   - Directory operations
+   - File content verification
+2. Advanced Function Tests
+   - File search by extension (.txt, .jpg, .mp3, etc.)
+   - Batch file operations
+   - Directory structure creation
+   - File type organization
+3. Performance Tests
+   - Sequential read/write speed test
+   - Random read/write speed test
+   - Small file batch operation test
+   - Large file read/write test
+   - Continuous write stress test
 ```
 
-### 📚 `basic_example.uf2`
-**Purpose:** Demonstrate core MicroSD functionality
-```
-Features:
-- SD card initialization and detection
-- File system information display
-- Basic file read/write operations
-- Directory creation and listing
-- Error handling demonstrations
-```
-
-### 🔧 `advanced_example.uf2`
-**Purpose:** Showcase advanced features
-```
-Features:
-- Batch file operations
-- Large file handling with chunked I/O
-- File system monitoring
-- Integrity checking with checksums
-- Recursive directory operations
-```
-
-### 🐛 `debug_example.uf2`
-**Purpose:** Simple debugging and troubleshooting
-```
-Features:
-- Step-by-step operation logging
-- Detailed error messages
-- Hardware connection verification
-- Real-time status updates
-```
+The test program creates a complete test environment with various file types and directories, then performs comprehensive testing of all functionality. Test results and progress are displayed via USB serial output at 115200 baud rate.
 
 ## 💻 Usage Example
 
@@ -213,6 +195,23 @@ struct SPIConfig {
 };
 ```
 
+#### `spi_config.hpp`
+SPI configuration file
+```cpp
+// Include the SPI configuration
+#include "spi_config.hpp"
+
+// Default SPI pin configuration
+SPIConfig config{
+    .spi_port = spi0,          // SPI port
+    .pin_miso = 7,             // MISO (GPIO7)
+    .pin_cs = 1,               // CS (GPIO1)
+    .pin_sck = 6,              // SCK (GPIO6)
+    .pin_mosi = 0              // MOSI (GPIO0)
+};
+SDCard sd_card(config);
+```
+
 ## 🛠️ Build System
 
 The project uses a modern CMake + Ninja build system:
@@ -231,11 +230,7 @@ The project uses a modern CMake + Ninja build system:
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature-name`)
-3. Commit your changes (`git commit -am 'Add feature'`)
-4. Push to the branch (`git push origin feature-name`)
-5. Create a Pull Request
+We welcome contributions! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
@@ -252,6 +247,112 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Issues**: Report bugs and request features via GitHub Issues
 - **Documentation**: Comprehensive examples included in `/examples` directory
 - **Hardware**: Verify connections match the wiring diagram above
+
+## 📁 Project Structure
+
+```
+MicroSD-Pico/
+├── include/                    # Header files
+│   ├── micro_sd.hpp           # Main MicroSD card library interface
+│   └── spi_config.hpp         # SPI configuration definitions
+├── src/                       # Source files
+│   └── micro_sd.cpp           # Implementation of MicroSD card library
+├── examples/                  # Example programs
+│   ├── basic_usage.cpp       # Basic file operations demo
+│   ├── advanced_usage.cpp    # Advanced features demo
+│   ├── debug_simple.cpp      # Simple debugging example
+│   ├── file_list_demo.cpp    # Directory listing demo
+│   ├── sd_capacity_test.cpp  # SD card capacity test
+│   └── serial_test.cpp       # Serial communication test
+├── lib/                      # External libraries
+├── build/                    # Build output directory
+└── CMakeLists.txt           # CMake build configuration
+```
+
+## 📚 API Reference
+
+### Core Classes and Functions
+
+#### `namespace MicroSD`
+
+All functionality is encapsulated in the `MicroSD` namespace to avoid naming conflicts.
+
+#### `class SDCard`
+
+The main class for interacting with the MicroSD card.
+
+##### File Operations
+```cpp
+Result<void> initialize();                    // Initialize SD card
+Result<std::vector<uint8_t>> read_file();    // Read entire file
+Result<void> write_file();                   // Write binary data
+Result<void> write_text_file();              // Write text content
+Result<void> delete_file();                  // Delete a file
+Result<void> copy_file();                    // Copy a file
+Result<void> rename();                       // Rename file/directory
+```
+
+##### Directory Operations
+```cpp
+Result<void> create_directory();             // Create new directory
+Result<void> remove_directory();             // Remove empty directory
+Result<std::vector<FileInfo>> list_directory(); // List directory contents
+Result<void> open_directory();               // Open a directory
+std::string get_current_directory();         // Get current path
+```
+
+##### File System Operations
+```cpp
+Result<std::pair<size_t, size_t>> get_capacity(); // Get total/free space
+std::string get_filesystem_type();           // Get filesystem type
+Result<void> format();                       // Format SD card
+Result<void> sync();                         // Sync cached data
+```
+
+#### `class FileHandle`
+
+RAII wrapper for file operations, automatically manages resources.
+
+```cpp
+Result<void> open();                         // Open file
+void close();                                // Close file
+Result<std::vector<uint8_t>> read();         // Read data
+Result<std::string> read_line();             // Read text line
+Result<size_t> write();                      // Write data
+Result<void> seek();                         // Seek position
+Result<size_t> tell();                       // Get position
+Result<size_t> size();                       // Get file size
+Result<void> flush();                        // Flush buffers
+```
+
+#### `struct FileInfo`
+
+File information structure.
+
+```cpp
+struct FileInfo {
+    std::string name;           // File name
+    std::string full_path;      // Full path
+    size_t size;               // File size in bytes
+    bool is_directory;         // Is directory flag
+    uint8_t attributes;        // File attributes
+};
+```
+
+#### Error Handling
+
+Modern C++ error handling using `Result<T>` template:
+
+```cpp
+template<typename T>
+class Result {
+    bool is_ok() const;                     // Check success
+    bool is_error() const;                  // Check failure
+    ErrorCode error_code() const;           // Get error code
+    const std::string& error_message() const; // Get error message
+    T& operator*();                         // Access value
+};
+```
 
 ---
 
