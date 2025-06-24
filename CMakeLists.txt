@@ -1,4 +1,10 @@
 cmake_minimum_required(VERSION 3.13)
+# Pull in Raspberry Pi Pico SDK (must be defined before project)
+# Adjust the path if your SDK is installed elsewhere
+include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
+
+# Force the PICO_BOARD to pico_w BEFORE pico_sdk_init()
+set(PICO_BOARD pico_w CACHE STRING "Target board" FORCE)
 
 # 设置项目名称和语言
 set(PROJECT_NAME "MicroSD-Pico")
@@ -31,7 +37,8 @@ add_subdirectory(lib/pico_fatfs)
 
 # 创建MicroSD库
 add_library(micro_sd
-    src/micro_sd.cpp
+    src/storage_device.cpp
+    src/rw_sd.cpp
 )
 
 target_include_directories(micro_sd PUBLIC
@@ -66,16 +73,14 @@ else()
     target_compile_options(micro_sd PRIVATE -O2)
 endif()
 
-# 综合测试程序
-add_executable(performance_test
-    examples/performance_test.cpp
+# 添加可读写SD卡示例
+add_executable(rwsd_demo
+    examples/rwsd_demo.cpp
 )
-
-target_include_directories(performance_test PRIVATE
+target_include_directories(rwsd_demo PRIVATE
     include
 )
-
-target_link_libraries(performance_test
+target_link_libraries(rwsd_demo
     micro_sd
     pico_stdlib
     pico_stdio_usb
@@ -83,15 +88,11 @@ target_link_libraries(performance_test
     hardware_pio
     pico_fatfs
 )
+pico_enable_stdio_usb(rwsd_demo 1)
+pico_enable_stdio_uart(rwsd_demo 0)
+pico_add_extra_outputs(rwsd_demo)
 
-# 启用USB串口输出
-pico_enable_stdio_usb(performance_test 1)
-pico_enable_stdio_uart(performance_test 0)
-
-# 生成UF2文件
-pico_add_extra_outputs(performance_test)
-
-target_compile_definitions(performance_test PRIVATE
+target_compile_definitions(rwsd_demo PRIVATE
     PICO_DEFAULT_UART_BAUD_RATE=115200
     PICO_STDIO_USB_ENABLE_RESET_VIA_BAUD_RATE=1
     PICO_STDIO_USB_CONNECT_WAIT_TIMEOUT_MS=3000
